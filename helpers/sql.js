@@ -2,9 +2,9 @@ const { BadRequestError } = require("../expressError");
 
 /** Create setting columns and values from data
  *
- * If key name not match with column name (if there is in the jsToSql),
- * change the key name with same in the table. (take jsToSql value),
- * create with index number for update the value
+ * If field name not match with db column name (meaning the field is in the jsToSql),
+ * change the name with same in the table. (take jsToSql value),
+ * create with index number to update the value
  *
  * Returns { setCols: '"first_name"=$1, "last_name"=$2, "age"=$3',
  *          values: ["Ali", "Gel", 32]}
