@@ -13,6 +13,8 @@ const {
   commonAfterAll,
   u1Token,
   u2Token,
+  u3Token,
+  jobIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -176,6 +178,7 @@ describe("GET /users/:username", function () {
         lastName: "U1L",
         email: "user1@user.com",
         isAdmin: false,
+        jobs: jobIds,
       },
     });
   });
@@ -280,6 +283,45 @@ describe("DELETE /users/:username", function () {
   test("not found if user missing", async function () {
     const resp = await request(app)
       .delete(`/users/nope`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+});
+
+/************************************** POST /users/:username/jobs/:id */
+
+describe("POST /users/:username/jobs/:id", function () {
+  test("works for admin", async function () {
+    const resp = await request(app)
+      .post(`/users/u3/jobs/${jobIds[0]}`)
+      .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.body).toEqual({ applied: `${jobIds[0]}` });
+  });
+
+  test("works for users", async function () {
+    const resp = await request(app)
+      .post(`/users/u3/jobs/${jobIds[0]}`)
+      .set("authorization", `Bearer ${u3Token}`);
+    expect(resp.body).toEqual({ applied: `${jobIds[0]}` });
+  });
+
+  test("not works for users", async function () {
+    const resp = await request(app)
+      .post(`/users/u3/jobs/${jobIds[0]}`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("not found if user missing", async function () {
+    const resp = await request(app)
+      .post(`/users/user/jobs/${jobIds[0]}`)
+      .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+
+  test("not found if job missing", async function () {
+    const resp = await request(app)
+      .post(`/users/u1/jobs/0`)
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(404);
   });

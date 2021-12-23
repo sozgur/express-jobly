@@ -121,8 +121,8 @@ describe("GET /companies/:handle", function () {
         numEmployees: 1,
         logoUrl: "http://c1.img",
         jobs: [
-          { id: expect.any(Number), title: "j1", salary: 200, equity: "0.1" },
           { id: expect.any(Number), title: "j2", salary: 500, equity: null },
+          { id: expect.any(Number), title: "j1", salary: 200, equity: "0.1" },
         ],
       },
     });

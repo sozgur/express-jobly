@@ -5,7 +5,11 @@
 const jsonschema = require("jsonschema");
 
 const express = require("express");
-const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
+const {
+  ensureLoggedIn,
+  ensureAdmin,
+  ensureOwnAccountOrAdmin,
+} = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
 const { createToken } = require("../helpers/tokens");
@@ -42,7 +46,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
   }
 });
 
-/** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
+/** GET / => { users: [ {username, firstName, lastName, email, isAdmin, jobs  }, ... ] }
  *
  * Returns list of all users.
  *
@@ -60,7 +64,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- * Returns { username, firstName, lastName, isAdmin }
+ * Returns { username, firstName, lastName, isAdmin, jobs: [JobId, JobId, ...] }
  *
  * Authorization required: login
  **/
@@ -112,5 +116,28 @@ router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
     return next(err);
   }
 });
+
+/** POST /[username]/jobs/[jobId] => { applied }
+ *
+ * Allows that user to apply for a job
+ *
+ * Returns { applied: jobId }
+ *
+ * Authorization required: login or admin can create for other user
+ * */
+
+router.post(
+  "/:username/jobs/:id",
+  ensureOwnAccountOrAdmin,
+  async function (req, res, next) {
+    try {
+      const jobId = req.params.id;
+      await User.applyToJob(req.params.username, req.params.id);
+      return res.json({ applied: jobId });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 
 module.exports = router;

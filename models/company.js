@@ -119,6 +119,8 @@ class Company {
 
     const company = companyRes.rows[0];
 
+    if (!company) throw new NotFoundError(`No company: ${handle}`);
+
     const jobs = companyRes.rows.map((j) => {
       if (j.id) {
         return {
@@ -133,8 +135,6 @@ class Company {
     if (!jobs[0]) {
       jobs.length = 0;
     }
-
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
 
     return {
       handle: company.handle,
