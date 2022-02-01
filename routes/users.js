@@ -78,6 +78,29 @@ router.get("/:username", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
+/** POST /[username]/confirm => { user }
+ *
+ * Returns { username, first_name, last_name, email, is_admin }
+ *
+ * Authorization required: login
+ **/
+
+router.post(
+  "/:username/confirm",
+  ensureLoggedIn,
+  async function (req, res, next) {
+    try {
+      const user = await User.authenticate(
+        req.params.username,
+        req.body.password
+      );
+      return res.json({ user });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 /** PATCH /[username] { user } => { user }
  *
  * Data can include:

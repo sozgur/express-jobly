@@ -92,7 +92,6 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
     const validator = jsonschema.validate(req.body, jobUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
-      console.log("Helloooooo11111");
       throw new BadRequestError(errs);
     }
 
