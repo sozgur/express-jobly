@@ -1,6 +1,6 @@
 # Jobly Backend
 
-This is the Express backend for Jobly, version 2.
+This is the Express backend for Jobly, version 2. Written in Node using the Express web framework and a PostgreSQL database.
 
 To install:
 
